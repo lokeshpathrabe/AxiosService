@@ -35,6 +35,7 @@ export const BaseApiInstance = new AxiosService(
 	  responseSuccessInterceptors: [...],
 	  responseErrorInterceptors: [...],
 	  tokenRetryCount: 1,
+	  authFailedStatus: [403, 401],
 	  checkTokenExpired: (error) => error.response.data.code === 'SESSION_EXPIRED'
 	  onSessionExpired: (error) => redirectToUrl(error.response.data.redirectUrl)
 	  refreshAccessToken: () => {
