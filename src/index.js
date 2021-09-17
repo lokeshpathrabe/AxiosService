@@ -84,10 +84,9 @@ class APIService {
     return this.AUTH_FAILED_STATUS.indexOf(status) > -1;
   }
 
-  async callRefreshToken(lockToken, tokenRetryCount = 0) {
+  async callRefreshToken(tokenRetryCount = 0) {
     try {
       const response = await this.refreshAccessToken({
-        lockToken,
         skipAccessTokenRetry: true,
         tokenRetryCount,
       });
@@ -101,7 +100,6 @@ class APIService {
 
       if (config.tokenRetryCount < this.ACCESS_TOKEN_RETRY_COUNT) {
         return this.callRefreshToken(
-          config.lockToken,
           config.tokenRetryCount + 1
         );
       } else {
