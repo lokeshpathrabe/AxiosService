@@ -1,14 +1,16 @@
 {
-  "name": "axiosservice",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "@lokeshpathrabe/axiosservice",
+  "version": "1.0.2",
+  "description": "APIService based on axios to manage auto refresh of auth tokens and retries on failure",
+  "main": "dist/bundle.js",
+  "files": [
+    "dist/bundle.js"
+  ],
   "scripts": {
     "test": "jest --watch",
     "build": "webpack"
   },
   "author": "lokeshpathrabe",
-  "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",
@@ -24,5 +26,17 @@
     "setupFilesAfterEnv": [
       "./setupTests.js"
     ]
+  },
+  "keywords": [
+    "axios",
+    "retry auth token",
+    "axio retry",
+    "axios interceptor",
+    "retry failed api"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lokeshpathrabe/AxiosService.git"
   }
 }

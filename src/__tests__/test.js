@@ -9,7 +9,7 @@ const mockResponseErrorInterceptor = jest.fn((response) => response);
 
 const BaseApiInstance = new APIService(
   {
-    timeout: 30000,
+    timeout: 3000,
     baseURL: "http://example.com/",
   },
   {
@@ -22,19 +22,14 @@ const BaseApiInstance = new APIService(
     onSessionExpired: (error) => mockOnSessionExpiry(),
     refreshAccessToken: () => {
       // Fetch new auth token
-      const response = mockFetch("http://example.com/fetchToken");
-      // Logic to update new token in store for upcoming API calls
+      return mockFetch("http://example.com/fetchToken").then((response) => {
+        // Logic to update new token for upcoming API calls
+        return response;
+      });
     },
   }
 );
 const mock = new MockAdapter(BaseApiInstance.instance, { delayResponse: 200 });
-
-beforeAll(() => {
-  mock.onGet("http://example.com/fetchToken").reply(200, { name: "lokesh" });
-  mock
-    .onGet("http://example.com/fetchTokenWithEror")
-    .reply(500, { code: "TOKEN_ERROR" });
-});
 
 beforeEach(() => {
   jest.clearAllMocks();
