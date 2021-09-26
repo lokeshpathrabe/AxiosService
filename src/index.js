@@ -23,9 +23,9 @@ class APIService {
       tokenRetryCount,
       refreshAccessToken,
       onSessionExpired,
-      requestInterceptors,
-      responseSuccessInterceptors,
-      responseErrorInterceptors,
+      requestInterceptors = [],
+      responseSuccessInterceptors = [],
+      responseErrorInterceptors = [],
     } = config;
 
     this.AUTH_FAILED_STATUS = authFailedStatus;
@@ -46,15 +46,13 @@ class APIService {
       ...axiosCfg,
     });
 
-    if (requestInterceptors?.length) {
-      const interceptors = [
-        this.apiRequestLockInterceptor,
-        ...requestInterceptors,
-      ];
-      interceptors.forEach((interceptor) => {
-        this.instance.interceptors.request.use(interceptor);
-      });
-    }
+    const reqInterceptors = [
+      this.apiRequestLockInterceptor,
+      ...requestInterceptors,
+    ];
+    reqInterceptors.forEach((interceptor) => {
+      this.instance.interceptors.request.use(interceptor);
+    });
 
     if (responseSuccessInterceptors?.length) {
       responseSuccessInterceptors.forEach((interceptor) => {
@@ -62,18 +60,16 @@ class APIService {
       });
     }
 
-    if (responseErrorInterceptors?.length) {
-      const interceptors = [
-        this.authErrorResponseErrorInterceptor.bind(this),
-        ...responseErrorInterceptors,
-      ];
-      interceptors.forEach((interceptor) => {
-        this.instance.interceptors.response.use(
-          (response) => response,
-          interceptor
-        );
-      });
-    }
+    const resErrorInterceptors = [
+      this.authErrorResponseErrorInterceptor.bind(this),
+      ...responseErrorInterceptors,
+    ];
+    resErrorInterceptors.forEach((interceptor) => {
+      this.instance.interceptors.response.use(
+        (response) => response,
+        interceptor
+      );
+    });
   }
 
   isAuthFailed(response) {
@@ -99,9 +95,7 @@ class APIService {
       }
 
       if (config.tokenRetryCount < this.ACCESS_TOKEN_RETRY_COUNT) {
-        return this.callRefreshToken(
-          config.tokenRetryCount + 1
-        );
+        return this.callRefreshToken(config.tokenRetryCount + 1);
       } else {
         if (typeof this.onSessionExpired === "function") {
           return this.onSessionExpired(error);
@@ -112,7 +106,6 @@ class APIService {
 
   async retryFailedRequest(error) {
     const { config } = error.response;
-
     //We store the original urls in config object in apiRequestLockInterceptor
     if (!config.skipApiRetry) {
       config.baseURL = config.requestedBaseUrl;
@@ -144,7 +137,6 @@ class APIService {
       await this.callRefreshToken();
       APILockService.releaseLock();
     }
-
     return this.retryFailedRequest(error);
   }
 
